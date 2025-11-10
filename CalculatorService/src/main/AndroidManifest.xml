@@ -7,6 +7,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CalculatorAidl" />
+        android:theme="@style/Theme.CalculatorAidl">
+
+        <service
+            android:name=".CalculatorService"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.lemonade.aidl.calculatorservice.CALCULATOR_SERVICE"/>
+            </intent-filter>
+        </service>
+    </application>
 
 </manifest>
