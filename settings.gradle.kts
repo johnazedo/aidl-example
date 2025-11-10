@@ -20,4 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Calculator Aidl"
-include(":app")
+include(":AidlCommon")
+include(":CalculatorService")
+include(":AppClient")
