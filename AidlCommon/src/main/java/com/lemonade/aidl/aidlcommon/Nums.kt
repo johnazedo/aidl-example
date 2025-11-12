@@ -5,12 +5,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Numbers(
-    private val num1: Int,
-    private val num2: Int
+    val num1: Int,
+    val num2: Int
 ): Parcelable
 
 
 @Parcelize
 class CalculatorServiceResult(
     val operationResult: Int? = null
-): ServiceResult(), Parcelable
+): Parcelable

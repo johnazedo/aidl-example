@@ -4,9 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.lemonade.aidlcommon.ICalculatorContractV1
-import com.lemonade.aidlcommon.ICalculatorContractV2
-import com.lemonade.aidlcommon.ICalculatorContractV3
+import com.lemonade.aidl.aidlcommon.ICalculatorContractV1
+import com.lemonade.aidl.aidlcommon.ICalculatorContractV2
+import com.lemonade.aidl.aidlcommon.ICalculatorContractV3
 
 class CalculatorService: Service() {
     override fun onBind(intent: Intent?): IBinder {
