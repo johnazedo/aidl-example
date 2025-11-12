@@ -82,7 +82,16 @@ fun App() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 item {
-                    var number1 by remember { mutableStateOf("") }
+                    var number1 by rememberoverride fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                when (service?.interfaceDescriptor) {
+                    ICalculatorContractV2.DESCRIPTOR -> {
+                        calculatorServiceV2 = ICalculatorContractV2.Stub.asInterface(service)
+                    }
+                    ICalculatorContractV1.DESCRIPTOR -> {
+                        calculatorServiceV1 = ICalculatorContractV1.Stub.asInterface(service)
+                    }
+                }
+            } { mutableStateOf("") }
                     var number2 by remember { mutableStateOf("") }
                     var result by remember { mutableStateOf("") }
 

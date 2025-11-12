@@ -8,3 +8,12 @@ data class Nums(
     private val num1: Int,
     private val num2: Int
 ): Parcelable
+
+@Parcelize
+class CalculatorServiceResult(
+    val result: Int
+): ServiceResult(), Data, Parcelable {
+    override fun getData(): CalculatorServiceResult {
+        return this
+    }
+}
