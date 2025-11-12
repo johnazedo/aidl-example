@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.lemonade.aidlcommon.ICalculatorContractV1
-import com.lemonade.aidlcommon.ICalculatorContractV2
+import com.lemonade.aidl.aidlcommon.ICalculatorContractV1
+import com.lemonade.aidl.aidlcommon.ICalculatorContractV2
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,16 +82,7 @@ fun App() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 item {
-                    var number1 by rememberoverride fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                when (service?.interfaceDescriptor) {
-                    ICalculatorContractV2.DESCRIPTOR -> {
-                        calculatorServiceV2 = ICalculatorContractV2.Stub.asInterface(service)
-                    }
-                    ICalculatorContractV1.DESCRIPTOR -> {
-                        calculatorServiceV1 = ICalculatorContractV1.Stub.asInterface(service)
-                    }
-                }
-            } { mutableStateOf("") }
+                    var number1 by remember { mutableStateOf("") }
                     var number2 by remember { mutableStateOf("") }
                     var result by remember { mutableStateOf("") }
 
