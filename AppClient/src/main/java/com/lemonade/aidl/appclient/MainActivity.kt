@@ -1,12 +1,12 @@
 package com.lemonade.aidl.appclient
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +28,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.lemonade.aidlcommon.ICalculatorContractV1
+import com.lemonade.aidlcommon.ICalculatorContractV2
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,17 +43,26 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-    var calculatorService by remember { mutableStateOf<ICalculatorContractV1?>(null) }
+    var calculatorServiceV2 by remember { mutableStateOf<ICalculatorContractV2?>(null) }
+    var calculatorServiceV1 by remember { mutableStateOf<ICalculatorContractV1?>(null) }
     val context = LocalContext.current
 
     val serviceConnection = remember {
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                calculatorService = ICalculatorContractV1.Stub.asInterface(service)
+                when (service?.interfaceDescriptor) {
+                    ICalculatorContractV2.DESCRIPTOR -> {
+                        calculatorServiceV2 = ICalculatorContractV2.Stub.asInterface(service)
+                    }
+                    ICalculatorContractV1.DESCRIPTOR -> {
+                        calculatorServiceV1 = ICalculatorContractV1.Stub.asInterface(service)
+                    }
+                }
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                calculatorService = null
+                calculatorServiceV2 = null
+                calculatorServiceV1 = null
             }
         }
     }
@@ -62,7 +71,6 @@ fun App() {
         val intent = Intent("com.lemonade.aidl.calculatorservice.CALCULATOR_SERVICE")
         intent.setPackage("com.lemonade.aidl.calculatorservice")
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-
         onDispose {
             context.unbindService(serviceConnection)
         }
@@ -103,21 +111,21 @@ fun App() {
                             Button(onClick = {
                                 val num1 = number1.toIntOrNull() ?: 0
                                 val num2 = number2.toIntOrNull() ?: 0
-                                result = calculatorService?.add(num1, num2)?.toString() ?: "N/A"
+                                result = (calculatorServiceV2?.add(num1, num2)?.toString() ?: calculatorServiceV1?.add(num1, num2)?.toString()) ?: "N/A"
                             }) {
                                 Text("+")
                             }
                             Button(onClick = {
                                 val num1 = number1.toIntOrNull() ?: 0
                                 val num2 = number2.toIntOrNull() ?: 0
-                                result = calculatorService?.sub(num1, num2)?.toString() ?: "N/A"
+                                result = (calculatorServiceV2?.sub(num1, num2)?.toString() ?: calculatorServiceV1?.sub(num1, num2)?.toString()) ?: "N/A"
                             }) {
                                 Text("-")
                             }
                             Button(onClick = {
                                 val num1 = number1.toIntOrNull() ?: 0
                                 val num2 = number2.toIntOrNull() ?: 0
-                                result = calculatorService?.times(num1, num2)?.toString() ?: "N/A"
+                                result = (calculatorServiceV2?.times(num1, num2)?.toString() ?: calculatorServiceV1?.times(num1, num2)?.toString()) ?: "N/A"
                             }) {
                                 Text("*")
                             }
@@ -125,7 +133,7 @@ fun App() {
                                 val num1 = number1.toIntOrNull() ?: 0
                                 val num2 = number2.toIntOrNull() ?: 0
                                 result = try {
-                                    calculatorService?.div(num1, num2)?.toString() ?: "N/A"
+                                    (calculatorServiceV2?.div(num1, num2, 0)?.toString() ?: calculatorServiceV1?.div(num1, num2)?.toString()) ?: "N/A"
                                 } catch (e: Exception) {
                                     "Error"
                                 }
