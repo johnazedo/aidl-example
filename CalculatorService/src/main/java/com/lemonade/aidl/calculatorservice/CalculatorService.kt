@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.util.Log
 import com.lemonade.aidlcommon.ICalculatorContractV1
 import com.lemonade.aidlcommon.ICalculatorContractV2
+import com.lemonade.aidlcommon.ICalculatorContractV3
 
 class CalculatorService: Service() {
     override fun onBind(intent: Intent?): IBinder {
@@ -64,5 +65,6 @@ class CalculatorService: Service() {
             return num1%num2
         }
     }
+
 
 }

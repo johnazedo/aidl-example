@@ -1,9 +1,12 @@
 package com.lemonade.aidlcommon;
 
-interface ICalculatorContractV2 {
-    int add(int num1, int num2);
-    int times(int num1, int num2);
-    int sub(int num1, int num2);
-    int div(int num1, int num2, int errorValue);
-    int mod(int num1, int num2);
+import com.lemonade.aidl.aidlcommmon.CalculatorServiceResult;
+import com.lemonade.aidl.aidlcommmon.Numbers;
+
+interface ICalculatorContractV3 {
+    CalculatorServiceResult add(Numbers numbers);
+    CalculatorServiceResult times(Numbers numbers);
+    CalculatorServiceResult sub(Numbers numbers);
+    CalculatorServiceResult div(Numbers numbers);
+    CalculatorServiceResult mod(Numbers numbers);
 }
