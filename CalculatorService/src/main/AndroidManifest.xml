@@ -17,6 +17,15 @@
                 <action android:name="com.lemonade.aidl.calculatorservice.CALCULATOR_SERVICE"/>
             </intent-filter>
         </service>
+
+        <service
+            android:name=".TransferService"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.lemonade.aidl.calculatorservice.TRANSFER_SERVICE"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

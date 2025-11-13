@@ -4,34 +4,35 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.lemonade.aidl.aidlcommon.ICalculatorContractV1
-import com.lemonade.aidl.aidlcommon.ICalculatorContractV2
-import com.lemonade.aidl.aidlcommon.ICalculatorContractV3
+import com.lemonade.aidl.aidlcommon.calculator.ICalculatorContractV1
+import com.lemonade.aidl.aidlcommon.calculator.ICalculatorContractV2
+
+private const val TAG = "CalculatorService"
 
 class CalculatorService: Service() {
     override fun onBind(intent: Intent?): IBinder {
-        Log.i("AIDL TEST", "OnBinding")
-        return Binder()
+        Log.d(TAG, "onBind")
+        return BinderV2()
     }
 
     class Binder: ICalculatorContractV1.Stub() {
         override fun add(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call sum")
+            Log.d(TAG, "add($num1, $num2) called")
             return num1 + num2
         }
 
         override fun times(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call times")
+            Log.d(TAG, "times($num1, $num2) called")
             return num1 * num2
         }
 
         override fun sub(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call sub")
+            Log.d(TAG, "sub($num1, $num2) called")
             return num1 - num2
         }
 
         override fun div(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call div")
+            Log.d(TAG, "div($num1, $num2) called")
             if(num2 == 0) return 0
             return num1/num2
         }
@@ -39,32 +40,30 @@ class CalculatorService: Service() {
 
     class BinderV2: ICalculatorContractV2.Stub() {
         override fun add(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call sum - V2")
+            Log.d(TAG, "add($num1, $num2) called on V2")
             return num1 + num2
         }
 
         override fun times(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call times - V2")
+            Log.d(TAG, "times($num1, $num2) called on V2")
             return num1 * num2
         }
 
         override fun sub(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call sub - V2")
+            Log.d(TAG, "sub($num1, $num2) called on V2")
             return num1 - num2
         }
 
         override fun div(num1: Int, num2: Int, errorValue: Int): Int {
-            Log.i("AIDL TEST", "Call div - V2")
+            Log.d(TAG, "div($num1, $num2) called on V2")
             if(num2 == 0) return errorValue
             return num1/num2
         }
 
         override fun mod(num1: Int, num2: Int): Int {
-            Log.i("AIDL TEST", "Call mod - V2")
+            Log.d(TAG, "mod($num1, $num2) called on V2")
             if(num2 == 0) return 0
             return num1%num2
         }
     }
-
-
 }

@@ -1,139 +1,179 @@
 package com.lemonade.aidl.aidlcommon.transfer
 
+import android.os.Parcel
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 
-// Each object will have 32KB of data
-const val size = 128
+// Each object is 32KB
+const val size = 256
 
-@Parcelize
 data class TransferData(
-    val field1: String = "a".repeat(size),
-    val field2: String = "b".repeat(size),
-    val field3: String = "c".repeat(size),
-    val field4: String = "d".repeat(size),
-    val field5: String = "e".repeat(size),
-    val field6: String = "f".repeat(size),
-    val field7: String = "g".repeat(size),
-    val field8: String = "h".repeat(size),
-    val field9: String = "i".repeat(size),
-    val field10: String = "j".repeat(size),
-    val field11: String = "k".repeat(size),
-    val field12: String = "l".repeat(size),
-    val field13: String = "m".repeat(size),
-    val field14: String = "n".repeat(size),
-    val field15: String = "o".repeat(size),
-    val field16: String = "p".repeat(size),
-    val field17: String = "q".repeat(size),
-    val field18: String = "r".repeat(size),
-    val field19: String = "s".repeat(size),
-    val field20: String = "t".repeat(size),
-    val field21: String = "u".repeat(size),
-    val field22: String = "v".repeat(size),
-    val field23: String = "w".repeat(size),
-    val field24: String = "x".repeat(size),
-    val field25: String = "y".repeat(size),
-    val field26: String = "z".repeat(size),
-    val field27: String = "A".repeat(size),
-    val field28: String = "B".repeat(size),
-    val field29: String = "C".repeat(size),
-    val field30: String = "D".repeat(size),
-    val field31: String = "E".repeat(size),
-    val field32: String = "F".repeat(size),
-    val field33: String = "G".repeat(size),
-    val field34: String = "H".repeat(size),
-    val field35: String = "I".repeat(size),
-    val field36: String = "J".repeat(size),
-    val field37: String = "K".repeat(size),
-    val field38: String = "L".repeat(size),
-    val field39: String = "M".repeat(size),
-    val field40: String = "N".repeat(size),
-    val field41: String = "O".repeat(size),
-    val field42: String = "P".repeat(size),
-    val field43: String = "Q".repeat(size),
-    val field44: String = "R".repeat(size),
-    val field45: String = "S".repeat(size),
-    val field46: String = "T".repeat(size),
-    val field47: String = "U".repeat(size),
-    val field48: String = "V".repeat(size),
-    val field49: String = "W".repeat(size),
-    val field50: String = "X".repeat(size),
-    val field51: String = "Y".repeat(size),
-    val field52: String = "Z".repeat(size),
-    val field53: String = "0".repeat(size),
-    val field54: String = "1".repeat(size),
-    val field55: String = "2".repeat(size),
-    val field56: String = "3".repeat(size),
-    val field57: String = "4".repeat(size),
-    val field58: String = "5".repeat(size),
-    val field59: String = "6".repeat(size),
-    val field60: String = "7".repeat(size),
-    val field61: String = "8".repeat(size),
-    val field62: String = "9".repeat(size),
-    val field63: String = "!".repeat(size),
-    val field64: String = "@".repeat(size),
-    val field65: String = "a".repeat(size),
-    val field66: String = "b".repeat(size),
-    val field67: String = "c".repeat(size),
-    val field68: String = "d".repeat(size),
-    val field69: String = "e".repeat(size),
-    val field70: String = "f".repeat(size),
-    val field71: String = "g".repeat(size),
-    val field72: String = "h".repeat(size),
-    val field73: String = "i".repeat(size),
-    val field74: String = "j".repeat(size),
-    val field75: String = "k".repeat(size),
-    val field76: String = "l".repeat(size),
-    val field77: String = "m".repeat(size),
-    val field78: String = "n".repeat(size),
-    val field79: String = "o".repeat(size),
-    val field80: String = "p".repeat(size),
-    val field81: String = "q".repeat(size),
-    val field82: String = "r".repeat(size),
-    val field83: String = "s".repeat(size),
-    val field84: String = "t".repeat(size),
-    val field85: String = "u".repeat(size),
-    val field86: String = "v".repeat(size),
-    val field87: String = "w".repeat(size),
-    val field88: String = "x".repeat(size),
-    val field89: String = "y".repeat(size),
-    val field90: String = "z".repeat(size),
-    val field91: String = "A".repeat(size),
-    val field92: String = "B".repeat(size),
-    val field93: String = "C".repeat(size),
-    val field94: String = "D".repeat(size),
-    val field95: String = "E".repeat(size),
-    val field96: String = "F".repeat(size),
-    val field97: String = "G".repeat(size),
-    val field98: String = "H".repeat(size),
-    val field99: String = "I".repeat(size),
-    val field100: String = "J".repeat(size),
-    val field101: String = "K".repeat(size),
-    val field102: String = "L".repeat(size),
-    val field103: String = "M".repeat(size),
-    val field104: String = "N".repeat(size),
-    val field105: String = "O".repeat(size),
-    val field106: String = "P".repeat(size),
-    val field107: String = "Q".repeat(size),
-    val field108: String = "R".repeat(size),
-    val field109: String = "S".repeat(size),
-    val field110: String = "T".repeat(size),
-    val field111: String = "U".repeat(size),
-    val field112: String = "V".repeat(size),
-    val field113: String = "W".repeat(size),
-    val field114: String = "X".repeat(size),
-    val field115: String = "Y".repeat(size),
-    val field116: String = "Z".repeat(size),
-    val field117: String = "0".repeat(size),
-    val field118: String = "1".repeat(size),
-    val field119: String = "2".repeat(size),
-    val field120: String = "3".repeat(size),
-    val field121: String = "4".repeat(size),
-    val field122: String = "5".repeat(size),
-    val field123: String = "6".repeat(size),
-    val field124: String = "7".repeat(size),
-    val field125: String = "8".repeat(size),
-    val field126: String = "9".repeat(size),
-    val field127: String = "!".repeat(size),
-    val field128: String = "@".repeat(size)
-) : Parcelable
+    val field1: String,
+    val field2: String,
+    val field3: String,
+    val field4: String,
+    val field5: String,
+    val field6: String,
+    val field7: String,
+    val field8: String,
+    val field9: String,
+    val field10: String,
+    val field11: String,
+    val field12: String,
+    val field13: String,
+    val field14: String,
+    val field15: String,
+    val field16: String,
+    val field17: String,
+    val field18: String,
+    val field19: String,
+    val field20: String,
+    val field21: String,
+    val field22: String,
+    val field23: String,
+    val field24: String,
+    val field25: String,
+    val field26: String,
+    val field27: String,
+    val field28: String,
+    val field29: String,
+    val field30: String,
+    val field31: String,
+    val field32: String,
+    val field33: String,
+    val field34: String,
+    val field35: String,
+    val field36: String,
+    val field37: String,
+    val field38: String,
+    val field39: String,
+    val field40: String,
+    val field41: String,
+    val field42: String,
+    val field43: String,
+    val field44: String,
+    val field45: String,
+    val field46: String,
+    val field47: String,
+    val field48: String,
+    val field49: String,
+    val field50: String,
+    val field51: String,
+    val field52: String,
+    val field53: String,
+    val field54: String,
+    val field55: String,
+    val field56: String,
+    val field57: String,
+    val field58: String,
+    val field59: String,
+    val field60: String,
+    val field61: String,
+    val field62: String,
+    val field63: String,
+    val field64: String
+) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!
+    )
+
+    constructor() : this(
+        "a".repeat(size), "b".repeat(size), "c".repeat(size), "d".repeat(size), "e".repeat(size), "f".repeat(size), "g".repeat(size), "h".repeat(size), "i".repeat(size), "j".repeat(size), "k".repeat(size), "l".repeat(size), "m".repeat(size), "n".repeat(size), "o".repeat(size), "p".repeat(size), "q".repeat(size), "r".repeat(size), "s".repeat(size), "t".repeat(size), "u".repeat(size), "v".repeat(size), "w".repeat(size), "x".repeat(size), "y".repeat(size), "z".repeat(size), "A".repeat(size), "B".repeat(size), "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size), "G".repeat(size), "H".repeat(size), "I".repeat(size), "J".repeat(size), "K".repeat(size), "L".repeat(size), "M".repeat(size), "N".repeat(size), "O".repeat(size), "P".repeat(size), "Q".repeat(size), "R".repeat(size), "S".repeat(size), "T".repeat(size), "U".repeat(size), "V".repeat(size), "W".repeat(size), "X".repeat(size), "Y".repeat(size), "Z".repeat(size), "0".repeat(size), "1".repeat(size), "2".repeat(size), "3".repeat(size), "4".repeat(size), "5".repeat(size), "6".repeat(size), "7".repeat(size), "8".repeat(size), "9".repeat(size), "!".repeat(size), "@".repeat(size)
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(field1)
+        parcel.writeString(field2)
+        parcel.writeString(field3)
+        parcel.writeString(field4)
+        parcel.writeString(field5)
+        parcel.writeString(field6)
+        parcel.writeString(field7)
+        parcel.writeString(field8)
+        parcel.writeString(field9)
+        parcel.writeString(field10)
+        parcel.writeString(field11)
+        parcel.writeString(field12)
+        parcel.writeString(field13)
+        parcel.writeString(field14)
+        parcel.writeString(field15)
+        parcel.writeString(field16)
+        parcel.writeString(field17)
+        parcel.writeString(field18)
+        parcel.writeString(field19)
+        parcel.writeString(field20)
+        parcel.writeString(field21)
+        parcel.writeString(field22)
+        parcel.writeString(field23)
+        parcel.writeString(field24)
+        parcel.writeString(field25)
+        parcel.writeString(field26)
+        parcel.writeString(field27)
+        parcel.writeString(field28)
+        parcel.writeString(field29)
+        parcel.writeString(field30)
+        parcel.writeString(field31)
+        parcel.writeString(field32)
+        parcel.writeString(field33)
+        parcel.writeString(field34)
+        parcel.writeString(field35)
+        parcel.writeString(field36)
+        parcel.writeString(field37)
+        parcel.writeString(field38)
+        parcel.writeString(field39)
+        parcel.writeString(field40)
+        parcel.writeString(field41)
+        parcel.writeString(field42)
+        parcel.writeString(field43)
+        parcel.writeString(field44)
+        parcel.writeString(field45)
+        parcel.writeString(field46)
+        parcel.writeString(field47)
+        parcel.writeString(field48)
+        parcel.writeString(field49)
+        parcel.writeString(field50)
+        parcel.writeString(field51)
+        parcel.writeString(field52)
+        parcel.writeString(field53)
+        parcel.writeString(field54)
+        parcel.writeString(field55)
+        parcel.writeString(field56)
+        parcel.writeString(field57)
+        parcel.writeString(field58)
+        parcel.writeString(field59)
+        parcel.writeString(field60)
+        parcel.writeString(field61)
+        parcel.writeString(field62)
+        parcel.writeString(field63)
+        parcel.writeString(field64)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<TransferData> {
+        override fun createFromParcel(parcel: Parcel): TransferData {
+            return TransferData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TransferData?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
