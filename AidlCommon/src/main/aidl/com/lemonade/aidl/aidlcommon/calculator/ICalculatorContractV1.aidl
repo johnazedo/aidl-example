@@ -1,4 +1,4 @@
-package com.lemonade.aidl.aidlcommon;
+package com.lemonade.aidl.aidlcommon.calculator;
 
 interface ICalculatorContractV1 {
     int add(int num1, int num2);

@@ -1,7 +1,7 @@
-package com.lemonade.aidl.aidlcommon;
+package com.lemonade.aidl.aidlcommon.calculator;
 
-import com.lemonade.aidl.aidlcommon.CalculatorServiceResult;
-import com.lemonade.aidl.aidlcommon.Numbers;
+import com.lemonade.aidl.aidlcommon.calculator.CalculatorServiceResult;
+import com.lemonade.aidl.aidlcommon.calculator.Numbers;
 
 parcelable Numbers;
 parcelable CalculatorServiceResult;

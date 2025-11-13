@@ -1,4 +1,4 @@
-package com.lemonade.aidl.aidlcommon
+package com.lemonade.aidl.aidlcommon.calculator
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
