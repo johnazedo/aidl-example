@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 // Each object is 32KB
-const val size = 256
+const val size = 75
 
 data class TransferData(
     val field1: String,
@@ -39,6 +39,24 @@ data class TransferData(
     val field30: String,
     val field31: String,
     val field32: String,
+    val field33: String,
+    val field34: String,
+    val field35: String,
+    val field36: String,
+    val field37: String,
+    val field38: String,
+    val field39: String,
+    val field40: String,
+    val field41: String,
+    val field42: String,
+    val field43: String,
+    val field44: String,
+    val field45: String,
+    val field46: String,
+    val field47: String,
+    val field48: String,
+    val field49: String,
+    val field50: String,
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -50,6 +68,11 @@ data class TransferData(
         parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
         parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
         parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!,
+        parcel.readString()!!, parcel.readString()!!
 
     )
 
@@ -62,6 +85,11 @@ data class TransferData(
         "u".repeat(size), "v".repeat(size), "w".repeat(size), "x".repeat(size),
         "y".repeat(size), "z".repeat(size), "A".repeat(size), "B".repeat(size),
         "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size),
+        "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size),
+        "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size),
+        "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size),
+        "C".repeat(size), "D".repeat(size), "E".repeat(size), "F".repeat(size),
+        "C".repeat(size), "D".repeat(size)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -97,6 +125,24 @@ data class TransferData(
         parcel.writeString(field30)
         parcel.writeString(field31)
         parcel.writeString(field32)
+        parcel.writeString(field33)
+        parcel.writeString(field34)
+        parcel.writeString(field35)
+        parcel.writeString(field36)
+        parcel.writeString(field37)
+        parcel.writeString(field38)
+        parcel.writeString(field39)
+        parcel.writeString(field40)
+        parcel.writeString(field41)
+        parcel.writeString(field42)
+        parcel.writeString(field43)
+        parcel.writeString(field44)
+        parcel.writeString(field45)
+        parcel.writeString(field46)
+        parcel.writeString(field47)
+        parcel.writeString(field48)
+        parcel.writeString(field49)
+        parcel.writeString(field50)
     }
 
     override fun describeContents(): Int {
