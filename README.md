@@ -1,6 +1,7 @@
 # Regras do AIDL
 
--  AIDL só transfere objetos de até 1MB do serviço para o cliente. É necessário usar o `SharedMemory` para enviar dados maiores de 1MB. 
+-  AIDL só transfere objetos de até 1MB do serviço para o cliente. É necessário usar o `SharedMemory` para enviar dados maiores de 1MB;
+- `MemoryFile` permite apenas que seja transferido dados com tamanho de 1MB até 128MB;
 
 | Ação no arquivo aidl                                               | Permissão          |
 |--------------------------------------------------------------------|--------------------|

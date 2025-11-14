@@ -15,7 +15,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -199,57 +198,51 @@ fun TransferScreen() {
             )
         }
         item {
-            Column( // Use a Column to stack the button rows
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = {
-                        val count = numberOfItems.toIntOrNull() ?: 0
-                        Log.d(TAG, "Get Data (List) button clicked with count: $count")
-                        if (count > 0 && transferService != null) {
-                            var dataSize = 0
-                            val time = measureTimeMillis {
-                                try {
-                                    val data = transferService?.getData(count)
-                                    dataSize = data?.size ?: 0
-                                } catch (e: Exception) {
-                                    Log.e(TAG, "getData failed (likely too large)", e)
-                                    dataSize = -1 // Error indicator
-                                }
+                Button(onClick = {
+                    val count = numberOfItems.toIntOrNull() ?: 0
+                    Log.d(TAG, "Get Data (List) button clicked with count: $count")
+                    if (count > 0 && transferService != null) {
+                        var dataSize = 0
+                        val time = measureTimeMillis {
+                            try {
+                                val data = transferService?.getData(count)
+                                dataSize = data?.size ?: 0
+                            } catch (e: Exception) {
+                                Log.e(TAG, "getData failed (likely too large)", e)
+                                dataSize = -1 // Error indicator
                             }
-                            val newResult = if (dataSize != -1) {
-                                "List: Got $dataSize items. Call took ${time}ms."
-                            } else {
-                                "List: Transaction FAILED. Call took ${time}ms."
-                            }
-                            results = listOf(newResult) + results // Prepend to list
-                            Log.d(TAG, newResult)
                         }
-                    }) {
-                        Text("Get Data (List)")
-                    }
-                    Button(onClick = {
-                        fetchWithSharedMemory(transferService, numberOfItems, results) { newResults ->
-                            results = newResults
+                        val newResult = if (dataSize != -1) {
+                            "List: Got $dataSize items. Call took ${time}ms."
+                        } else {
+                            "List: Transaction FAILED. Call took ${time}ms."
                         }
-                    }) {
-                        // Change button text to reflect the dynamic choice
-                        Text("Get Data (SharedMem)")
+                        results = listOf(newResult) + results // Prepend to list
+                        Log.d(TAG, newResult)
                     }
-                    Button(onClick = {
-                        fetchWithMemoryFile(transferService, numberOfItems, results) { newResults ->
-                                results = newResults
-                        }
-                    }) {
-                        // Change button text to reflect the dynamic choice
-                        Text( "Get Data (MemoryFile)")
+                }) {
+                    Text("Get Data (List)")
+                }
+                Button(onClick = {
+                    fetchWithSharedMemory(transferService, numberOfItems, results) { newResults ->
+                        results = newResults
                     }
+                }) {
+                    Text("Get Data (SharedMem)")
+                }
+                Button(onClick = {
+                    fetchWithMemoryFile(transferService, numberOfItems, results) { newResults ->
+                        results = newResults
+                    }
+                }) {
+                    Text("Get Data (MemoryFile)")
                 }
             }
         }
@@ -286,8 +279,8 @@ private fun fetchWithSharedMemory(
                         parcel.unmarshall(bytes, 0, bytes.size)
                         parcel.setDataPosition(0)
                         // This is crucial for custom Parcelables
-                        parcel.readBundle(TransferData::class.java.classLoader)
-                        parcel.setDataPosition(0)
+//                        parcel.readBundle(TransferData::class.java.classLoader)
+//                        parcel.setDataPosition(0)
                         val data: ArrayList<TransferData>? =
                             parcel.createTypedArrayList(TransferData.CREATOR)
                         dataSize = data?.size ?: 0
@@ -336,9 +329,9 @@ private fun fetchWithMemoryFile(
                             // 2. Unmarshall the bytes into the Parcel
                             parcel.unmarshall(bytes, 0, bytes.size)
                             parcel.setDataPosition(0)
-                            // 3. IMPORTANT: Set the classloader to handle custom Parcelables
-                            parcel.readBundle(TransferData::class.java.classLoader)
-                            parcel.setDataPosition(0)
+//                            // 3. IMPORTANT: Set the classloader to handle custom Parcelables
+//                            parcel.readBundle(TransferData::class.java.classLoader)
+//                            parcel.setDataPosition(0)
                             // 4. Create the typed list from the parcel
                             val data: ArrayList<TransferData>? =
                                 parcel.createTypedArrayList(TransferData.CREATOR)
@@ -352,7 +345,6 @@ private fun fetchWithMemoryFile(
                 Log.e(TAG, "Failed to read from MemoryFile", e)
                 dataSize = -1
             } finally {
-                // 5. It's crucial to close the ParcelFileDescriptor to release the shared memory
                 pfd?.close()
             }
         }
