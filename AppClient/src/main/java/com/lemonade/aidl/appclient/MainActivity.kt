@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Parcel
+import android.os.ParcelFileDescriptor
 import android.os.SharedMemory
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -41,6 +42,7 @@ import com.lemonade.aidl.aidlcommon.calculator.ICalculatorContractV1
 import com.lemonade.aidl.aidlcommon.calculator.ICalculatorContractV2
 import com.lemonade.aidl.aidlcommon.transfer.ITransferContractV1
 import com.lemonade.aidl.aidlcommon.transfer.TransferData
+import java.io.FileInputStream
 import kotlin.system.measureTimeMillis
 
 private const val TAG = "MainActivity"
@@ -152,7 +154,6 @@ fun CalculatorScreen() {
         // ... (Calculator UI remains the same)
     }
 }
-
 @Composable
 fun TransferScreen() {
     Log.d(TAG, "TransferScreen")
@@ -198,77 +199,57 @@ fun TransferScreen() {
             )
         }
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            Column( // Use a Column to stack the button rows
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = {
-                    val count = numberOfItems.toIntOrNull() ?: 0
-                    Log.d(TAG, "Get Data (List) button clicked with count: $count")
-                    if (count > 0 && transferService != null) {
-                        var dataSize = 0
-                        val time = measureTimeMillis {
-                            try {
-                                val data = transferService?.getData(count)
-                                dataSize = data?.size ?: 0
-                            } catch (e: Exception) {
-                                Log.e(TAG, "getData failed (likely too large)", e)
-                                dataSize = -1 // Error indicator
-                            }
-                        }
-                        val newResult = if (dataSize != -1) {
-                            "List: Got $dataSize items. Call took ${time}ms."
-                        } else {
-                            "List: Transaction FAILED. Call took ${time}ms."
-                        }
-                        results = listOf(newResult) + results // Prepend to list
-                        Log.d(TAG, newResult)
-                    }
-                }) {
-                    Text("Get Data (List)")
-                }
-                Button(onClick = {
-                    val count = numberOfItems.toIntOrNull() ?: 0
-                    Log.d(TAG, "Get Data (SharedMemory) button clicked with count: $count")
-                    if (count > 0 && transferService != null) {
-                        var dataSize = 0
-                        val time = measureTimeMillis {
-                            val sharedMemory = transferService?.getDataV2(count)
-                            if (sharedMemory != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = {
+                        val count = numberOfItems.toIntOrNull() ?: 0
+                        Log.d(TAG, "Get Data (List) button clicked with count: $count")
+                        if (count > 0 && transferService != null) {
+                            var dataSize = 0
+                            val time = measureTimeMillis {
                                 try {
-                                    val byteBuffer = sharedMemory.mapReadOnly()
-                                    val parcel = Parcel.obtain()
-                                    try {
-                                        val bytes = ByteArray(byteBuffer.remaining())
-                                        byteBuffer.get(bytes)
-                                        parcel.unmarshall(bytes, 0, bytes.size)
-                                        parcel.setDataPosition(0)
-                                        val data: ArrayList<TransferData>? =
-                                            parcel.createTypedArrayList(TransferData.CREATOR)
-                                        dataSize = data?.size ?: 0
-                                    } finally {
-                                        parcel.recycle()
-                                    }
+                                    val data = transferService?.getData(count)
+                                    dataSize = data?.size ?: 0
                                 } catch (e: Exception) {
-                                    Log.e(TAG, "Failed to read from SharedMemory", e)
-                                    dataSize = -1
-                                } finally {
-                                    sharedMemory.close()
+                                    Log.e(TAG, "getData failed (likely too large)", e)
+                                    dataSize = -1 // Error indicator
                                 }
                             }
+                            val newResult = if (dataSize != -1) {
+                                "List: Got $dataSize items. Call took ${time}ms."
+                            } else {
+                                "List: Transaction FAILED. Call took ${time}ms."
+                            }
+                            results = listOf(newResult) + results // Prepend to list
+                            Log.d(TAG, newResult)
                         }
-                        val newResult = if (dataSize != -1) {
-                            "SharedMem: Got $dataSize items. Call took ${time}ms."
-                        } else {
-                            "SharedMem: FAILED to read data. Call took ${time}ms."
-                        }
-                        results = listOf(newResult) + results // Prepend to list
-                        Log.d(TAG, newResult)
+                    }) {
+                        Text("Get Data (List)")
                     }
-                }) {
-                    Text("Get Data (SharedMem)")
+                    Button(onClick = {
+                        fetchWithSharedMemory(transferService, numberOfItems, results) { newResults ->
+                            results = newResults
+                        }
+                    }) {
+                        // Change button text to reflect the dynamic choice
+                        Text("Get Data (SharedMem)")
+                    }
+                    Button(onClick = {
+                        fetchWithMemoryFile(transferService, numberOfItems, results) { newResults ->
+                                results = newResults
+                        }
+                    }) {
+                        // Change button text to reflect the dynamic choice
+                        Text( "Get Data (MemoryFile)")
+                    }
                 }
             }
         }
@@ -279,5 +260,108 @@ fun TransferScreen() {
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
+    }
+}
+
+
+private fun fetchWithSharedMemory(
+    transferService: ITransferContractV1?,
+    numberOfItems: String,
+    currentResults: List<String>,
+    updateResults: (List<String>) -> Unit
+) {
+    val count = numberOfItems.toIntOrNull() ?: 0
+    Log.d(TAG, "Get Data (SharedMemory) button clicked with count: $count")
+    if (count > 0 && transferService != null) {
+        var dataSize = 0
+        val time = measureTimeMillis {
+            val sharedMemory = transferService.getDataV2(count)
+            if (sharedMemory != null) {
+                try {
+                    val byteBuffer = sharedMemory.mapReadOnly()
+                    val parcel = Parcel.obtain()
+                    try {
+                        val bytes = ByteArray(byteBuffer.remaining())
+                        byteBuffer.get(bytes)
+                        parcel.unmarshall(bytes, 0, bytes.size)
+                        parcel.setDataPosition(0)
+                        // This is crucial for custom Parcelables
+                        parcel.readBundle(TransferData::class.java.classLoader)
+                        parcel.setDataPosition(0)
+                        val data: ArrayList<TransferData>? =
+                            parcel.createTypedArrayList(TransferData.CREATOR)
+                        dataSize = data?.size ?: 0
+                    } finally {
+                        parcel.recycle()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to read from SharedMemory", e)
+                    dataSize = -1
+                } finally {
+                    sharedMemory.close()
+                }
+            }
+        }
+        val newResult = if (dataSize != -1) {
+            "SharedMem: Got $dataSize items. Call took ${time}ms."
+        } else {
+            "SharedMem: FAILED to read data. Call took ${time}ms."
+        }
+        updateResults(listOf(newResult) + currentResults)
+        Log.d(TAG, newResult)
+    }
+}
+
+
+private fun fetchWithMemoryFile(
+    transferService: ITransferContractV1?,
+    numberOfItems: String,
+    currentResults: List<String>,
+    updateResults: (List<String>) -> Unit
+) {
+    val count = numberOfItems.toIntOrNull() ?: 0
+    Log.d(TAG, "Get Data (MemoryFile) button clicked with count: $count")
+    if (count > 0 && transferService != null) {
+        var dataSize = 0
+        val time = measureTimeMillis {
+            var pfd: ParcelFileDescriptor? = null
+            try {
+                pfd = transferService.getDataV3(count)
+                if (pfd != null) {
+                    // 1. Get an InputStream from the ParcelFileDescriptor
+                    FileInputStream(pfd.fileDescriptor).use { fis ->
+                        val bytes = fis.readBytes()
+                        val parcel = Parcel.obtain()
+                        try {
+                            // 2. Unmarshall the bytes into the Parcel
+                            parcel.unmarshall(bytes, 0, bytes.size)
+                            parcel.setDataPosition(0)
+                            // 3. IMPORTANT: Set the classloader to handle custom Parcelables
+                            parcel.readBundle(TransferData::class.java.classLoader)
+                            parcel.setDataPosition(0)
+                            // 4. Create the typed list from the parcel
+                            val data: ArrayList<TransferData>? =
+                                parcel.createTypedArrayList(TransferData.CREATOR)
+                            dataSize = data?.size ?: 0
+                        } finally {
+                            parcel.recycle()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to read from MemoryFile", e)
+                dataSize = -1
+            } finally {
+                // 5. It's crucial to close the ParcelFileDescriptor to release the shared memory
+                pfd?.close()
+            }
+        }
+        val newResult = if (dataSize != -1) {
+            "MemoryFile: Got $dataSize items. Call took ${time}ms."
+        } else {
+            "MemoryFile: FAILED to read data. Call took ${time}ms."
+        }
+        updateResults(listOf(newResult) + currentResults)
+        Log.d(TAG, newResult)
     }
 }

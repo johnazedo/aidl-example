@@ -3,12 +3,16 @@ package com.lemonade.aidl.calculatorservice
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.os.MemoryFile
 import android.os.Parcel
+import android.os.ParcelFileDescriptor
 import android.os.SharedMemory
 import android.system.OsConstants
 import android.util.Log
 import com.lemonade.aidl.aidlcommon.transfer.ITransferContractV1
 import com.lemonade.aidl.aidlcommon.transfer.TransferData
+import java.io.FileDescriptor
+import java.io.IOException
 
 private const val TAG = "TransferService"
 
@@ -60,6 +64,45 @@ class TransferService: Service(){
                 null
             } finally {
                 parcel.recycle()
+            }
+        }
+
+        override fun getDataV3(numberOfData: Int): ParcelFileDescriptor? {
+            Log.d(TAG, "getDataV3($numberOfData) called for $numberOfData items")
+            val dataList = List(numberOfData) { TransferData() }
+
+            val parcel = Parcel.obtain()
+            var memoryFile: MemoryFile? = null
+            return try {
+                // 1. Marshall the list into a byte array using a Parcel.
+                parcel.writeTypedList(dataList)
+                val bytes = parcel.marshall()
+                Log.d(TAG, "Marshalled data size for MemoryFile: ${bytes.size} bytes")
+
+                // 2. Create a MemoryFile and write the byte array to it.
+                // The name is optional and used for debugging.
+                memoryFile = MemoryFile("transfer_data_mf", bytes.size)
+                memoryFile.writeBytes(bytes, 0, 0, bytes.size)
+
+                // 3. Get the FileDescriptor from the MemoryFile. This is the key to sharing.
+                val getFileDescriptorMethod = MemoryFile::class.java.getDeclaredMethod("getFileDescriptor")
+                val fd = getFileDescriptorMethod.invoke(memoryFile) as FileDescriptor
+
+
+                // 4. Wrap the FileDescriptor in a ParcelFileDescriptor to send over Binder.
+                // The remote process takes ownership of the duplicated descriptor.
+                ParcelFileDescriptor.dup(fd)
+
+            } catch (e: IOException) {
+                Log.e(TAG, "Error creating MemoryFile", e)
+                null
+            } finally {
+                parcel.recycle()
+                // IMPORTANT: Do NOT close the MemoryFile here.
+                // The Binder framework and the remote process are now responsible for the
+                // lifecycle of the duplicated file descriptor. Closing it here would
+                // cause a "bad file descriptor" error on the client side.
+                // memoryFile?.close() // <-- DO NOT DO THIS
             }
         }
     }
