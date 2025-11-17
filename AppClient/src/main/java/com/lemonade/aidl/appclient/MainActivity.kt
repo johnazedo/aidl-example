@@ -111,11 +111,11 @@ fun CalculatorScreen() {
     val context = LocalContext.current
 
     val serviceConnection = remember {
-        ServiceManager { result ->
+        ServiceManager({ result ->
             result.onSuccess { feature ->
                 calculatorFeatures = feature
             }
-        }
+        })
     }
 
     DisposableEffect(Unit) {
