@@ -15,6 +15,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -106,30 +107,13 @@ fun SelectionScreen(onCalculatorClick: () -> Unit, onTransferClick: () -> Unit) 
 @Composable
 fun CalculatorScreen() {
     Log.d(TAG, "CalculatorScreen")
-    var calculatorServiceV2 by remember { mutableStateOf<ICalculatorContractV2?>(null) }
-    var calculatorServiceV1 by remember { mutableStateOf<ICalculatorContractV1?>(null) }
+    var calculatorFeatures by remember { mutableStateOf<CalculatorFeatures?>(null) }
     val context = LocalContext.current
 
     val serviceConnection = remember {
-        object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-                Log.d(TAG, "Calculator service connected")
-                when (service?.interfaceDescriptor) {
-                    ICalculatorContractV2.DESCRIPTOR -> {
-                        Log.d(TAG, "Connected to CalculatorService V2")
-                        calculatorServiceV2 = ICalculatorContractV2.Stub.asInterface(service)
-                    }
-                    ICalculatorContractV1.DESCRIPTOR -> {
-                        Log.d(TAG, "Connected to CalculatorService V1")
-                        calculatorServiceV1 = ICalculatorContractV1.Stub.asInterface(service)
-                    }
-                }
-            }
-
-            override fun onServiceDisconnected(name: ComponentName?) {
-                Log.d(TAG, "Calculator service disconnected")
-                calculatorServiceV2 = null
-                calculatorServiceV1 = null
+        ServiceManager { result ->
+            result.onSuccess { feature ->
+                calculatorFeatures = feature
             }
         }
     }
@@ -150,7 +134,57 @@ fun CalculatorScreen() {
     var result by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // ... (Calculator UI remains the same)
+        OutlinedTextField(
+            value = number1,
+            onValueChange = { number1 = it },
+            label = { Text("Primeiro número") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+        OutlinedTextField(
+            value = number2,
+            onValueChange = { number2 = it },
+            label = { Text("Segundo número") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = {
+                val num1 = number1.toIntOrNull() ?: 0
+                val num2 = number2.toIntOrNull() ?: 0
+                calculatorFeatures?.add(num1, num2)?.onSuccess{ result = it.toString()}
+            }) {
+                Text("+")
+            }
+            Button(onClick = {
+                val num1 = number1.toIntOrNull() ?: 0
+                val num2 = number2.toIntOrNull() ?: 0
+                calculatorFeatures?.sub(num1, num2)?.onSuccess{ result = it.toString()}
+            }) {
+                Text("-")
+            }
+            Button(onClick = {
+                val num1 = number1.toIntOrNull() ?: 0
+                val num2 = number2.toIntOrNull() ?: 0
+                calculatorFeatures?.times(num1, num2)?.onSuccess{ result = it.toString()}
+            }) {
+                Text("*")
+            }
+            Button(onClick = {
+                val num1 = number1.toIntOrNull() ?: 0
+                val num2 = number2.toIntOrNull() ?: 0
+                calculatorFeatures?.div(num1, num2)?.onSuccess{ result = it.toString()}
+            }) {
+                Text("/")
+            }
+        }
+        Text(text = "Resultado: $result", modifier = Modifier.padding(top = 16.dp))
     }
 }
 @Composable
@@ -329,9 +363,6 @@ private fun fetchWithMemoryFile(
                             // 2. Unmarshall the bytes into the Parcel
                             parcel.unmarshall(bytes, 0, bytes.size)
                             parcel.setDataPosition(0)
-//                            // 3. IMPORTANT: Set the classloader to handle custom Parcelables
-//                            parcel.readBundle(TransferData::class.java.classLoader)
-//                            parcel.setDataPosition(0)
                             // 4. Create the typed list from the parcel
                             val data: ArrayList<TransferData>? =
                                 parcel.createTypedArrayList(TransferData.CREATOR)
