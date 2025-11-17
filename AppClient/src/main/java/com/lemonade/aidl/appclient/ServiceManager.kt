@@ -43,6 +43,7 @@ class ServiceManager(
                 binderFeature = calculator
             }
         }
+        onConnected(getFeatures())
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
